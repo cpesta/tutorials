@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # csv file name
 training_filename = "zoo.csv"
-testing_filename = "drift_reptile_feathers.csv"
+testing_filename = "drift_fish&reptiles_milk&feathers.csv"
 
 # load csv files
 training_data = pd.read_csv(training_filename)
@@ -294,7 +294,6 @@ def print_tree(node, spacing=""):
     print(spacing + '--> False:')
     print_tree(node.false_branch, spacing + "  ")
 
-
 def classify(row, node):
     """See the 'rules of recursion' above."""
 
@@ -309,7 +308,6 @@ def classify(row, node):
         return classify(row, node.true_branch)
     else:
         return classify(row, node.false_branch)
-
 
 def print_leaf(counts):
     """A nicer way to print the predictions at a leaf."""
@@ -337,45 +335,6 @@ def retrain():
             hits += 1
     accuracy = hits / len(testing_data)
     print("Accuracy: ", accuracy)
-    
-# Function that populates the node hits dict with the number of hits that
-# goes through each node
-def find_node_hits(node):
-    if isinstance(node, Leaf):
-        return node_hits[node.number]
-    node_hits.update(node.number, find_node_hits(node.true_branch) + find_node_hits(node.false_branch))
-
-# Function that populates the node misses dict with the number of misses
-# that goes through each node
-def find_node_misses(node):
-    if isinstance(node, Leaf):
-        return node_misses[node.number]
-    node_misses.update(node.number, find_node_misses(node.true_branch) + find_node_misses(node.false_branch))
-
-# Function that finds the node at which the tree should be pruned and
-# retrained
-# If both the true and false accuracy for a node are below 0.7, this node
-# is pruned. Also, if either the true or false accuracy is below 0.5, this 
-# node is pruned.
-def find_prune_node(node):
-    true_accuracy = node_hits[node.true_branch.number] / (node_hits[node.true_branch.number] + node_misses[node.true_branch.number])
-    false_accuracy = node_hits[node.false_branch.number] / (node_hits[node.false_branch.number] + node_misses[node.false_branch.number])
-    if true_accuracy < 0.7 and false_accuracy < 0.7 or true_accuracy < 0.5 or false_accuracy < 0.5:
-        return(node)
-    elif true_accuracy <= false_accuracy and isinstance(node, Leaf) == False:
-        return(find_prune_node(node.true_branch))
-    elif false_accuracy <= true_accuracy and isinstance(node, Leaf) == False:
-        return(find_prune_node(node.false_branch))
-    else:
-        return(node)
-
-# Function that populates the data through node dict with the data that
-# moves through the given node
-def find_node_data(node):
-    if isinstance(node, Leaf):
-        return(data_through_node[node.number])
-    data_through_node[node.number] = data_through_node[node.number].append(find_node_data(node.true_branch))
-    data_through_node[node.number] = data_through_node[node.number].append(find_node_data(node.false_branch))
 
 if __name__ == '__main__':
     my_tree = build_tree(training_data)

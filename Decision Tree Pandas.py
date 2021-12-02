@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # csv file name
 training_filename = "zoo.csv"
-testing_filename = "drift_all.csv"
+testing_filename = "drift_fish&reptiles_milk&feathers.csv"
 
 # load csv files
 training_data = pd.read_csv(training_filename)
@@ -321,7 +321,7 @@ def print_leaf(counts):
 def retrain():
     global training_data
     for key in node_hits:
-        if node_hits[key] or node_misses[key] / node_hits[key] > 0.4:
+        if node_hits[key] == 0 or node_misses[key] / node_hits[key] > 0.4:
             training_data = training_data.append(data_through_node[key])
     new_tree = build_tree(training_data)
     print_tree(new_tree)
